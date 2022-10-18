@@ -15,12 +15,27 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 
-from PlayGroundEvent.views import return_ticket
+from PlayGroundEvent.views import return_ticket, high_s, del_met, view_tickets, ticket_view_set, EventGet, TicketGet, \
+    CompanyGet, healt_status, CustomUserSetView
+
+router = DefaultRouter()
+router.register(r'users', CustomUserSetView)
 
 urlpatterns = [
 
+    path("", include(router.urls)),
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
     path('base/', include('PlayGroundEvent.urls')),
+    path('Seri/', high_s),
+    path('del/<int:pk>', del_met),
+    path('more/', view_tickets),
+    path('one/<int:pk>', ticket_view_set),
+    path('event/<int:pk>', EventGet.as_view()),
+    path('ticket/<int:pk>', TicketGet.as_view()),
+    path('company/<int:pk>', CompanyGet.as_view()),
+    path('api-ping/', healt_status)
+
 ]

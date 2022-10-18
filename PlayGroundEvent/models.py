@@ -1,5 +1,7 @@
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AbstractUser
 from django.db import models
+
+
 
 class BaseDateMixin(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
@@ -45,9 +47,10 @@ class Ticket(BaseDateMixin):
     number = models.PositiveIntegerField(verbose_name='Номер билета')
     vip = models.BooleanField(verbose_name='Статус билета "ВИП"', default=False)
     user = models.ForeignKey(
-        User,
+        'CustomUser',
         verbose_name='Посетитель',
-        on_delete=models.CASCADE
+        on_delete=models.SET_NULL,
+        null=True,
     )
 
     def __str__(self):
@@ -56,3 +59,15 @@ class Ticket(BaseDateMixin):
 class Company(BaseDateMixin):
     title = models.CharField(max_length=100, verbose_name='Наимен'
                                                           '+ование организации')
+
+
+class CustomUser(AbstractUser):
+    TIERS = (
+        ("G", "GOLD"),
+        ("S", "SILVER"),
+        ("B", "BRONZE")
+    )
+    tier = models.CharField(max_length=1, choices=TIERS, null=True, blank=True)
+
+    def __str__(self):
+        return self.username
